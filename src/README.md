@@ -1,32 +1,37 @@
-# Description
-This directory contains source code of the project.
-
-# Workflow
-todo
+# build
 
 
-# Structure
+```bash
+cargo build --release
+```
 
-Folders: 
-- `generic_vm` - traits representing VM of any smart contracts
-- `evm` - Implementation of `generic_vm` for Ethereum Virtual Machine using revm. 
-- `move` - Implementation of `generic_vm` for MoveVM.
-- `fuzzers` - Definition of fuzzers for each VM.
+# 使用
 
-Files:
-- `executor.rs` - definition of `Executor` trait from LibAFL.
-- `feedback.rs` - definition of `Feedback` trait from LibAFL for collecting and analyzing feedback like coverage and comparison.
-- `indexed_corpus.rs` - just a corpus that has self-increment ID for each testcase.
-- `input.rs` - definition of `Input` trait from LibAFL.
-- `oracle.rs` - definition of `Oracle` trait.
-- `scheduler.rs` - definition of `Scheduler` trait from LibAFL, implements infant scheduler proposed in paper.
-- `state.rs` - definition of `State` trait from LibAFL that supports infant corpus proposed in paper.
-- `state_input.rs` - implementation of `Input` trait for VM states.
-- `tracer.rs` - traces of the snapshot of the state, used for regenerating the transactions leading to the VM state.
 
-Utils:
-- `rand_utils.rs` - random utilities.
-- `types.rs` - utilities for type conversion.
-- `telemetry.rs` - utilities for reporting fuzzing campaign telemetry information.
-- `const.rs` - constants used in the project.
+示例
 
+```bash
+cargo run --release -- evm -t '/home/junlin/test0114/*' --function-sequence-file '/path/to/.txt'
+```
+
+其他参照https://docs.ityfuzz.rs/
+
+-t指定目标路径，至少应包含abi和bin  （命令行一定要带上星号）
+
+--function-sequence-file指定初始函数序列即相应参数文件路径 .txt文件格式如下:指定函数名：参数1类型：参数1，参数2类型:参数2,
+
+*EXAMPLE*
+
+```txt
+transfer:address:0x1234567890abcdef1234567890abcdef12345678,uint256:1000
+transferFrom:address:0x1234567890abcdef1234567890abcdef12345678,address:0x1234567890abcdef1234567890abcdef12345678,uint256:500
+approve:address:0x1234567890abcdef1234567890abcdef12345678,uint256:1000
+approveAndCall:address:0x1234567890abcdef1234567890abcdef12345678,uint256:1000,string:"extra data"
+freezeAccount:address:0x1234567890abcdef1234567890abcdef12345678,bool:true
+transferOwnership:address:0x1234567890abcdef1234567890abcdef12345678
+setPrices:uint256:100,uint256:200
+setBuyOpen:bool:true
+setSellOpen:bool:true
+transferEth:uint256:10
+
+```
